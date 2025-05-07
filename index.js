@@ -1,62 +1,52 @@
-export default {
-  name: 'bulk-clear-characteristics',
-  label: 'Clear characteristic values',
-  icon: 'trash',
-  async execute(productIds) {
-    const confirmClear = confirm(`Clear characteristic values for ${productIds.length} products?`);
-    if (!confirmClear) return;
-
-    // Step 1: Load all attributes
-    const attributeResponse = await fetch('/api/rest/v1/attributes?limit=1000', {
-      headers: { 'Accept': 'application/json' },
-      credentials: 'same-origin',
-    });
-
-    const attributeData = await attributeResponse.json();
-    const characteristicAttrs = attributeData._embedded.items
-      .filter(attr => attr.group.startsWith('characteristics_'))
-      .map(attr => attr.code);
-
-    for (const identifier of productIds) {
-      const response = await fetch(`/api/rest/v1/products/${identifier}`, {
-        headers: { 'Accept': 'application/json' },
-        credentials: 'same-origin',
-      });
-
-      if (!response.ok) {
-        console.warn(`Failed to fetch product ${identifier}`);
-        continue;
-      }
-
-      const product = await response.json();
-      const clearedValues = {};
-
-      for (const attr of characteristicAttrs) {
-        if (product.values[attr]) {
-          clearedValues[attr] = null;
-        }
-      }
-
-      if (Object.keys(clearedValues).length === 0) {
-        console.log(`No characteristic values to clear for ${identifier}`);
-        continue;
-      }
-
-      const patchResponse = await fetch(`/api/rest/v1/products/${identifier}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        credentials: 'same-origin',
-        body: JSON.stringify({ values: clearedValues }),
-      });
-
-      if (!patchResponse.ok) {
-        console.error(`Failed to clear product ${identifier}`);
-      }
-    }
-
-    alert('Characteristic values cleared (only visible & allowed attributes).');
+window.addEventListener("message", function (event) {
+  // Ensure the message is from Akeneo
+  if (event.origin !== "https://your-akeneo-instance.com") {
+    return;
   }
-};
+
+  console.log("Received message:", event.data);
+  
+  if (event.data && event.data.productCodes) {
+    const productCodes = event.data.productCodes;
+    console.log("Processing products:", productCodes);
+    
+    // Call the function to clear attributes and handle success/failure
+    clearProductAttributes(productCodes)
+      .then(() => {
+        // After clearing attributes, send a message back to Akeneo
+        window.parent.postMessage({ status: "completed" }, "*");
+      })
+      .catch((error) => {
+        console.error("Error clearing attributes:", error);
+        window.parent.postMessage({ status: "failed", error: error.message }, "*");
+      });
+  }
+});
+
+// Function to clear attributes
+function clearProductAttributes(productCodes) {
+  return new Promise((resolve, reject) => {
+    // Replace with your actual API endpoint for clearing attributes
+    fetch("/path/to/your/akeneo/api", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Add authorization headers if necessary
+      },
+      body: JSON.stringify({
+        productCodes: productCodes,
+        // Include the list of attribute groups to clear
+        attributeGroups: ["characteristics_forks", "characteristics_fork_protection"]
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Successfully cleared attributes:", data);
+        resolve(data); // Resolve the promise on success
+      })
+      .catch((error) => {
+        console.error("Error clearing attributes:", error);
+        reject(error); // Reject the promise on error
+      });
+  });
+}
