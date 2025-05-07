@@ -3,7 +3,7 @@ window.addEventListener("message", function (event) {
   console.log("Message content:", event.data);
   
   // Verify message origin to ensure it's from Akeneo
-  if (event.origin !== "https://tvhsandbox.cloud.akeneo.com") {
+  if (event.origin !== "https://coruscating-hotteok-fda7bf.netlify.app") {
     console.error("Invalid origin, message ignored.");
     return;
   }
