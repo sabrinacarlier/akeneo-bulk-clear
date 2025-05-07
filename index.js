@@ -3,7 +3,7 @@ window.addEventListener("message", function (event) {
   console.log("Message content:", event.data);
   
   // Verify message structure and ensure the product codes are provided
-  if (event.origin !== "https://your-akeneo-instance.com") {
+  if (event.origin !== "https://tvhsandbox.cloud.akeneo.com") {
     console.error("Invalid origin, message ignored.");
     return;
   }
