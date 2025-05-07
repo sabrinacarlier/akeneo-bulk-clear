@@ -1,9 +1,9 @@
 {
-  "name": "bulk-clear-values",
+  "name": "akeneo_bulk_clear",
   "target": "product-grid",
   "type": "action",
   "jsFiles": ["index.js"],
   "label": {
-    "en_US": "Bulk Clear Characteristics"
+    "en_US": "Bulk clear attributes"
   }
 }
