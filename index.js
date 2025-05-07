@@ -1,14 +1,17 @@
 window.addEventListener("message", function (event) {
-  console.log("Message from origin:", event.origin);
-  console.log("Received message:", event.data);
-  
+  console.log("Message received from:", event.origin);
+  console.log("Message content:", event.data);
+
   if (event.data && event.data.productCodes) {
     const productCodes = event.data.productCodes;
-    console.log("Received product codes:", productCodes);
+    console.log("Product codes received:", productCodes);
 
-    // Confirm to Akeneo
+    // Send a fast dummy response to avoid timeout
     window.parent.postMessage(
-      { status: "test_completed", message: "Connection successful!" },
+      {
+        status: "done",
+        message: `Handled ${productCodes.length} product(s)`
+      },
       "*"
     );
   }
