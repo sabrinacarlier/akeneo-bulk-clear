@@ -1,18 +1,27 @@
 window.addEventListener("message", function (event) {
-  console.log("Message received from:", event.origin);
+  console.log("Received message from:", event.origin);
   console.log("Message content:", event.data);
+  
+  // Verify message structure and ensure the product codes are provided
+  if (event.origin !== "https://your-akeneo-instance.com") {
+    console.error("Invalid origin, message ignored.");
+    return;
+  }
 
   if (event.data && event.data.productCodes) {
     const productCodes = event.data.productCodes;
     console.log("Product codes received:", productCodes);
 
-    // Send a fast dummy response to avoid timeout
-    window.parent.postMessage(
-      {
-        status: "done",
-        message: `Handled ${productCodes.length} product(s)`
-      },
-      "*"
-    );
+    // Respond with the number of products received
+    window.parent.postMessage({
+      status: "done",
+      message: `Handled ${productCodes.length} product(s)`
+    }, "*");
+  } else {
+    console.error("No product codes found in the message");
+    window.parent.postMessage({
+      status: "error",
+      message: "No product codes found in the message."
+    }, "*");
   }
 });
