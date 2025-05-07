@@ -2,5 +2,8 @@
   "name": "bulk-clear-values",
   "target": "product-grid",
   "type": "action",
-  "jsFiles": ["index.js"]
+  "jsFiles": ["index.js"],
+  "label": {
+    "en_US": "Bulk Clear Characteristics"
+  }
 }
