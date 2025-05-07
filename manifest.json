@@ -1,0 +1,6 @@
+{
+  "name": "bulk-clear-values",
+  "target": "product-grid",
+  "type": "action",
+  "jsFiles": ["index.js"]
+}
