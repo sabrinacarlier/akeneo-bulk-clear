@@ -1,34 +1,11 @@
 window.addEventListener("message", function (event) {
-  console.log("Received message from:", event.origin);
-  console.log("Message content:", event.data);
-  
-  // Verify message origin to ensure it's from Akeneo
+  // Log the message to see if it's received
+  console.log("Received message:", event);
+
   if (event.origin !== "https://coruscating-hotteok-fda7bf.netlify.app") {
-    console.error("Invalid origin, message ignored.");
+    console.error("Invalid origin");
     return;
   }
 
-  // Check if we received product codes in the message
-  if (event.data && event.data.productCodes) {
-    const productCodes = event.data.productCodes;
-    console.log("Product codes received:", productCodes);
-    
-    // Simple static response back to Akeneo to confirm
-    window.parent.postMessage(
-      {
-        status: "done",
-        message: `Handled ${productCodes.length} product(s).`
-      },
-      "*"
-    );
-  } else {
-    console.log("No product codes found in message.");
-    window.parent.postMessage(
-      {
-        status: "error",
-        message: "No product codes found."
-      },
-      "*"
-    );
-  }
+  window.parent.postMessage({ status: "success", message: "Hello from the extension!" }, "*");
 });
