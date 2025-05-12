@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
-    <title>Akeneo Bulk Clear</title>
-    <style>
-      body { font-family: sans-serif; padding: 2rem; background: #f5f5f5; }
-      .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    </style>
+    <title>Akeneo UI Extension</title>
+    <script>
+      window.addEventListener("message", (event) => {
+        if (event.data?.type === "pim/product-grid-selection") {
+          console.log("Selected product identifiers:", event.data.payload.selectedItems);
+        }
+
+        // Let Akeneo know we're ready
+        window.parent.postMessage({ type: "pim/ready" }, "*");
+      });
+    </script>
   </head>
   <body>
-    <div class="container">
-      <h1>Bulk Clear Extension</h1>
-      <p>This screen is served from GitHub Pages and the action button in Akeneo is working.</p>
-      <p>Next step: handle selected products and call the API to clear values.</p>
-    </div>
-
-    <!-- ✅ Correct placement -->
-    <script src="index.js"></script>
+    <h2>Hello from UI Extension</h2>
+    <p>Select products and check the console.</p>
   </body>
 </html>
