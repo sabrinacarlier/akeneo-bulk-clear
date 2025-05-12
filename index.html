@@ -1,20 +1,30 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Akeneo UI Extension</title>
-    <script>
-      window.addEventListener("message", (event) => {
-        if (event.data?.type === "pim/product-grid-selection") {
-          console.log("Selected product identifiers:", event.data.payload.selectedItems);
-        }
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akeneo UI Extension</title>
+</head>
+<body>
+  <h1>Hello from UI Extension</h1>
+  <p>Select products in Akeneo and click the button to check the console.</p>
 
-        // Let Akeneo know we're ready
-        window.parent.postMessage({ type: "pim/ready" }, "*");
-      });
-    </script>
-  </head>
-  <body>
-    <h2>Hello from UI Extension</h2>
-    <p>Select products and check the console.</p>
-  </body>
+  <script>
+    // Listener for messages from the Akeneo iframe (context)
+    window.addEventListener('message', event => {
+      // Validate the source to ensure it’s from Akeneo
+      if (event.origin !== 'https://tvhsandbox.cloud.akeneo.com') return;
+
+      const data = event.data;
+
+      // Check if it's a response from Akeneo about the selected products
+      if (data.type === 'pim/ui-extension/product-grid/context') {
+        console.log('Selected product identifiers:', data.context.selectedProductCodes);
+      }
+    });
+
+    // Request Akeneo for product grid context (selected product codes)
+    window.parent.postMessage({ type: 'pim/ui-extension/request-context' }, '*');
+  </script>
+</body>
 </html>
