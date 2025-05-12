@@ -1,47 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Akeneo UI Extension Test</title>
-</head>
-<body>
-  <h1>Hello from UI Extension</h1>
-  <p>Select products and check the console.</p>
-
-  <script>
-    console.log("📨 Requesting context from Akeneo...");
-
-    // Ask Akeneo for context
-    window.parent.postMessage(
-      {
-        type: "pim/ui-extension/product-grid/request-context"
-      },
-      "*"
-    );
-
-    // Listen for response from Akeneo
-    window.addEventListener("message", (event) => {
-      console.log("🔔 Message received from:", event.origin);
-      console.log("📦 Message data:", event.data);
-
-      if (
-        event.data?.type === "pim/ui-extension/product-grid/context" &&
-        event.data.context
-      ) {
-        const selected = event.data.context.selectedProductCodes || [];
-        console.log("✅ Selected products:", selected);
-
-        // Optional: Send response back to Akeneo
-        window.parent.postMessage(
-          {
-            type: "pim/ui-extension/response",
-            result: "success",
-            message: "Received selected products"
-          },
-          "*"
-        );
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin/>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+            rel="stylesheet"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <title>UI Extensions</title>
+    <style>
+      body {
+        margin: 0;
       }
-    });
-  </script>
-</body>
+      .loading {
+        font-family: 'Lato',serif;
+        font-size: 15px;
+        color: #A1A9B7;
+        margin-top: 20px;
+        text-align: center;
+      }
+      .lds-dual-ring {
+        color: #9452BA;
+      }
+      .lds-dual-ring,
+      .lds-dual-ring:after {
+        box-sizing: border-box;
+      }
+      .lds-dual-ring {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+      }
+      .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 32px;
+        height: 32px;
+        margin: 8px;
+        border-radius: 50%;
+        border: 6.4px solid currentColor;
+        border-color: currentColor transparent currentColor transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+      }
+      @keyframes lds-dual-ring {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root">
+      <div class="loading">
+        Loading application...<br/>&nbsp;<br/>
+        <div class="lds-dual-ring"></div>
+      </div>
+      <!-- Add a button to trigger the action -->
+      <button id="fetchProductsBtn">Fetch Selected Products</button>
+    </div>
+
+    <script>
+      // Add your JavaScript here
+      document.getElementById('fetchProductsBtn').addEventListener('click', async function() {
+        try {
+          console.log('Button clicked! Fetching data...');
+          
+          // Sending a request to Akeneo API (replace with your actual API call)
+          const response = await fetch('https://tvhsandbox.cloud.akeneo.com/api/products', {
+            method: 'GET',  // You can change to POST if needed
+            headers: {
+              'Authorization': 'Bearer YOUR_ACCESS_TOKEN', // Add your authentication token here
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          const data = await response.json();
+          console.log('Received data:', data);  // Log the received data
+          
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      });
+    </script>
+  </body>
 </html>
