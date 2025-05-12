@@ -3,28 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Akeneo UI Extension</title>
-</head>
-<body>
-  <h1>Hello from UI Extension</h1>
-  <p>Select products in Akeneo and click the button to check the console.</p>
-
+  <title>Akeneo UI Extension Debugging</title>
   <script>
-    // Listener for messages from the Akeneo iframe (context)
-    window.addEventListener('message', event => {
-      // Validate the source to ensure it’s from Akeneo
-      if (event.origin !== 'https://tvhsandbox.cloud.akeneo.com') return;
+    // Step 1: Add event listener for receiving messages from Akeneo
+    window.addEventListener('message', function(event) {
+      // Step 2: Ensure the message is from Akeneo's domain
+      if (event.origin !== 'https://tvhsandbox.cloud.akeneo.com') {
+        console.error('Invalid message origin:', event.origin);
+        return;
+      }
 
       const data = event.data;
+      console.log('Received message:', data);
 
-      // Check if it's a response from Akeneo about the selected products
+      // Step 3: Check for product grid context response from Akeneo
       if (data.type === 'pim/ui-extension/product-grid/context') {
+        // Display selected product identifiers
         console.log('Selected product identifiers:', data.context.selectedProductCodes);
+      } else {
+        // Log other messages
+        console.log('Unhandled message type:', data.type);
       }
     });
 
-    // Request Akeneo for product grid context (selected product codes)
-    window.parent.postMessage({ type: 'pim/ui-extension/request-context' }, '*');
+    // Step 4: Send message to Akeneo to request context (selected products)
+    function requestContextFromAkeneo() {
+      console.log('Requesting context from Akeneo...');
+      window.parent.postMessage(
+        { type: 'pim/ui-extension/request-context' },
+        '*'  // This means it accepts messages from any origin, you can tighten this if needed.
+      );
+    }
+
+    // Step 5: Set a timeout in case Akeneo doesn't respond within 5 seconds
+    let timeout = setTimeout(() => {
+      console.warn('Response from Akeneo timed out.');
+    }, 5000); // Timeout after 5 seconds
+
+    // Trigger the request for context once the page loads
+    window.onload = function() {
+      requestContextFromAkeneo();
+    };
   </script>
+</head>
+<body>
+  <h1>Akeneo UI Extension Debugging</h1>
+  <p>Select some products and click the button to trigger the extension.</p>
+  <button onclick="requestContextFromAkeneo()">Request Product Context</button>
 </body>
 </html>
