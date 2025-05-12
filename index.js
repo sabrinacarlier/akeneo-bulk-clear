@@ -1,5 +1,7 @@
 const secret = "684tpg2b27wg8wc00os4cg44w0kk8gsc4woc4g4w44scgoocwo"; // Replace with your generated secret
 
+console.log("Bulk Clear Extension loaded");
+
 window.addEventListener("message", function (event) {
   // Ensure the message is from Akeneo and contains the correct secret
   if (event.origin !== "https://coruscating-hotteok-fda7bf.netlify.app" || event.data.secret !== secret) {
